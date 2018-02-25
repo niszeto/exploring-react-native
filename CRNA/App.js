@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Image, Button, TextInput, FlatList } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, Button, TextInput, Keyboard, Alert ,FlatList } from 'react-native';
+
+const secretPhrase = 'Reddit';
 
 const COMMUNITY_MEMBERS = [
   {
@@ -85,9 +87,9 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      backgroundColor: '#F6F6F6',
+      backgroundColor: '#6E6D75',
       phrase: '',
-    }
+    };
   }
 
   handleClick = () => {
@@ -98,32 +100,80 @@ export default class App extends React.Component {
     })
   }
 
-  handleSubmit= () => {
-    //display alert
-    //https://facebook.github.io/react-native/docs/alert.html
+  handleSubmit = () => {
+    Keyboard.dismiss
+    if(this.state.phrase === secretPhrase){
+      this.correctAlert();
+    }else{
+      this.incorrectAlert();
+    }
+  }
+
+  correctAlert = () => {
+    Alert.alert(
+      'Correct',
+      'You know the phrase',
+      [
+        { text: 'OK', onPress: () => console.log('OK pressed') }
+      ],
+      { cancelable: false }
+    )
+  }
+
+  incorrectAlert = () => {
+    Alert.alert(
+      'Incorrect',
+      "The phrase is Reddit",
+      [
+        { text: 'Try again', onPress: () => console.log('Try again pressed') }
+      ],
+      { cancelable: false }
+    )
+  }
+
+  renderMembersRow(member){
+    return(
+      <View
+        style={styles.rowContainer}
+        key={member}
+      >
+        <Image
+          source={{ url: member.image }} style={styles.avatar}
+        />
+
+        <Text style={styles.nameLabel}>{member.name}</Text>
+
+        <Text style={styles.gitHubUserNameLabel}>@{member.github_username}</Text>
+
+      </View>
+    )
   }
 
 
   render() {
     return (
       // ScrollView - Flex column
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        style={styles.scrollView}
+        onPress={Keyboard.dismiss}
+      >
+        
         {/* bigImageContainer - Flex row */}
         <View style={styles.bigImageContainer}>
           <Image 
-          source={require('./assets/images/batman.png')}
+          source={require('./assets/images/Batman.png')}
           style={styles.bigImage}
           />
         </View>
 
         <View style={styles.smallImageContainer}>
           <Image 
-            source={require('./assets/images/beefPho.jpg')}
+            source={require('./assets/images/NightWing.png')}
             style={styles.smallImage}
           />
 
           <Image 
-            source={require('./assets/images/ramen.jpg')}
+            source={require('./assets/images/BatmanBeyond.png')}
             style={styles.smallImage}
           />
         </View>
@@ -131,29 +181,43 @@ export default class App extends React.Component {
 
         <View 
         style={styles.toggleContainer}
-
         backgroundColor={this.state.backgroundColor}
         >
           <Button 
           style={styles.toggleButton}
           title='Change Background Color'
-          color='black'
+          color='#063A68'
           onPress={this.handleClick}
           />
-
         </View>
 
-        <TextInput
-          style={styles.textInputContainer}
-          value={this.state.phrase}
-          onChange={(text) => this.setState({phrase: text})}
-          // call handle submit to display an alert
-        />
+        
+        <View 
+        style={styles.textInputContainer}
+        >   
+          <TextInput
+            style={styles.textInput}
+            onChangeText={(phrase) => this.setState({phrase})}
+            placeholder='Enter Secret Word'
+            placeholderTextColor='#052E59'
+            underlineColorAndroid='transparent'
+            value={this.state.phrase}
+          
+            // call handle submit to display an alert
+            onSubmitEditing={() => this.handleSubmit()}
+          />
+        </View>
 
-        <FlatList
-          //display community memebers data 
-        />
+        <View style={styles.listViewContainer}>
+          <FlatList
+            //display community memebers data 
 
+            data={COMMUNITY_MEMBERS}
+            keyExtractor={(item,index) => index}
+            renderItem={({item}) => this.renderMembersRow(item)}
+            
+          />
+        </View>
       </ScrollView>
     );
   }
@@ -161,7 +225,7 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   scrollView:{
-    backgroundColor: 'black',
+    backgroundColor: '#0E0E0C',
     flexDirection: 'column',
   },
 
@@ -179,7 +243,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 20,
-    backgroundColor: 'red',
+    backgroundColor: '#08447B',
   },
 
   smallImage:{
@@ -191,14 +255,64 @@ const styles = StyleSheet.create({
   },
 
   toggleContainer: {
-    height: 200,
+    height: 300,
     justifyContent: 'center',
   },
   
   toggleButton:{
     flex:1,
   },
-  textInputContainer:{
 
-  }
+  textInputContainer:{
+    flex:1,
+    margin: 50,
+    justifyContent: 'center',
+  },
+
+  textInput:{
+    textAlign: 'center',
+    height: 50,
+    borderWidth: 2,
+    borderColor: '#FF5722',
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF'
+  },
+  
+  listViewContainer:{
+    marginBottom: 50,
+    justifyContent:'center',
+    // backgroundColor:'#DA72E7'
+  },
+
+  rowContainer:{
+    flexDirection: 'row',
+    height: 50,
+    alignItems: 'center',
+    backgroundColor: '#A7A2A8',
+    borderTopWidth: 1,
+    borderColor: 'black'
+  },
+
+  avatar:{
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    marginLeft: 10
+  },
+
+  nameLabel: {
+    fontSize: 18,
+    color: '#052E59',
+    marginLeft: 10,
+    fontWeight: 'bold'
+  },
+  
+  gitHubUserNameLabel: {
+    flex: 1,
+    textAlign: 'right',
+    fontSize: 15,
+    color: '#052E59',
+    marginRight: 20
+}
+
 });
