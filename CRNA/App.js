@@ -143,12 +143,13 @@ export default class App extends React.Component {
 
         <Text style={styles.nameLabel}>{member.name}</Text>
 
-        <Text style={styles.gitHubUserNameLabel}>@{member.github_username}</Text>
+        <Text 
+          style={styles.gitHubUserNameLabel}>@{member.github_username}
+        </Text>
 
       </View>
     )
   }
-
 
   render() {
     return (
@@ -202,8 +203,6 @@ export default class App extends React.Component {
             placeholderTextColor='#052E59'
             underlineColorAndroid='transparent'
             value={this.state.phrase}
-          
-            // call handle submit to display an alert
             onSubmitEditing={() => this.handleSubmit()}
           />
         </View>
@@ -211,11 +210,9 @@ export default class App extends React.Component {
         <View style={styles.listViewContainer}>
           <FlatList
             //display community memebers data 
-
             data={COMMUNITY_MEMBERS}
             keyExtractor={(item,index) => index}
             renderItem={({item}) => this.renderMembersRow(item)}
-            
           />
         </View>
       </ScrollView>
@@ -281,7 +278,6 @@ const styles = StyleSheet.create({
   listViewContainer:{
     marginBottom: 50,
     justifyContent:'center',
-    // backgroundColor:'#DA72E7'
   },
 
   rowContainer:{
